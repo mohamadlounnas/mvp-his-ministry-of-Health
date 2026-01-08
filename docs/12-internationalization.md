@@ -10,13 +10,12 @@
 ┌─────────────────────────────────────────────────────┐
 │                    GHIS System                      │
 ├─────────────────────────────────────────────────────┤
-│  Default Language: العربية (ar) - Hardcoded        │
-│  ─────────────────────────────────────────────────  │
+│  Default Language: العربية (ar) - Hardcoded         │
+│  ───────────────────────────────────────────────────│
 │  Dynamic Languages:                                 │
-│    ├── /locales/fr.json  (Français)                │
-│    ├── /locales/en.json  (English)                 │
-│    ├── /locales/ber.json (ⵜⴰⵎⴰⵣⵉⵖⵜ)               │
-│    └── /locales/*.json   (Any future language)     │
+│    ├── /locales/fr.json  (Français)                 │
+│    ├── /locales/en.json  (English)                  │
+│    └── /locales/*.json   (Any future language)      │
 └─────────────────────────────────────────────────────┘
 ```
 
