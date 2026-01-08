@@ -113,7 +113,7 @@ interface FHIRPatient {
   active: boolean;
   name: HumanName[];
   telecom: ContactPoint[];
-  gender: "male" | "female" | "other" | "unknown";
+  gender: "male" | "female";
   birthDate: string;
   deceasedBoolean?: boolean;
   deceasedDateTime?: string;
@@ -137,7 +137,7 @@ interface FHIRPractitioner {
   name: HumanName[];
   telecom: ContactPoint[];
   address: Address[];
-  gender: "male" | "female" | "other" | "unknown";
+  gender: "male" | "female";
   birthDate?: string;
   photo?: Attachment[];
   qualification: PractitionerQualification[];

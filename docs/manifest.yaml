@@ -89,6 +89,13 @@ documents:
     status: draft
     priority: high
 
+  - path: ./12-internationalization.md
+    title: Internationalization (i18n)
+    title_ar: استراتيجية تعدد اللغات
+    description: Dynamic language support - Arabic default, JSON-based translations for other languages
+    status: draft
+    priority: high
+
 standards_reference:
   - name: ICD-11
     url: https://icd.who.int/

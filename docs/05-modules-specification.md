@@ -144,8 +144,8 @@ export class Patient {
   @Column({ type: 'date' })
   birthDate: Date;
 
-  @Column({ type: 'enum', enum: ['male', 'female', 'other', 'unknown'] })
-  gender: string;
+  @Column({ type: 'enum', enum: ['male', 'female'] })
+  gender: 'male' | 'female';
 
   @Column({ type: 'jsonb', nullable: true })
   telecom: ContactPoint[];
