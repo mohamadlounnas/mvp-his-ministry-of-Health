@@ -5,69 +5,69 @@
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
-│                              GHIS Architecture                              │
+│                              GHIS Architecture                             │
 ├────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
+│                                                                            │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                        CLIENT LAYER                                  │   │
+│  │                        CLIENT LAYER                                 │   │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌────────────┐  │   │
 │  │  │ Flutter Web │  │ Flutter iOS │  │Flutter Droid│  │Flutter Desk│  │   │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘  │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
-│                                    │                                        │
-│                                    ▼                                        │
+│                                    │                                       │
+│                                    ▼                                       │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                      API GATEWAY (Nginx/Traefik)                     │   │
-│  │                    Rate Limiting · SSL · Load Balancing              │   │
+│  │                      API GATEWAY (Nginx/Traefik)                    │   │
+│  │                    Rate Limiting · SSL · Load Balancing             │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
-│                                    │                                        │
+│                                    │                                       │
 │              ┌─────────────────────┼─────────────────────┐                 │
 │              ▼                     ▼                     ▼                 │
-│  ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐          │
-│  │   Auth Service  │   │   Core Service  │   │  FHIR Service   │          │
-│  │    (NestJS)     │   │    (NestJS)     │   │    (NestJS)     │          │
-│  │                 │   │                 │   │                 │          │
-│  │ • JWT/OAuth2    │   │ • Patient       │   │ • FHIR API      │          │
-│  │ • RBAC         │   │ • Encounter     │   │ • Transformers  │          │
-│  │ • MFA          │   │ • Appointment   │   │ • Bundles       │          │
-│  │ • Session      │   │ • Billing       │   │ • Search        │          │
-│  └────────┬────────┘   └────────┬────────┘   └────────┬────────┘          │
-│           │                     │                     │                    │
-│           └─────────────────────┼─────────────────────┘                    │
+│   ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐          │
+│   │   Auth Service  │   │   Core Service  │   │  FHIR Service   │          │
+│   │    (NestJS)     │   │    (NestJS)     │   │    (NestJS)     │          │
+│   │                 │   │                 │   │                 │          │
+│   │ • JWT/OAuth2    │   │ • Patient       │   │ • FHIR API      │          │
+│   │ • RBAC          │   │ • Encounter     │   │ • Transformers  │          │
+│   │ • MFA           │   │ • Appointment   │   │ • Bundles       │          │
+│   │ • Session       │   │ • Billing       │   │ • Search        │          │
+│   └────────┬────────┘   └────────┬────────┘   └────────┬────────┘          │
+│           │                     │                      │                   │
+│           └─────────────────────┼──────────────────────┘                   │
 │                                 ▼                                          │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                       MESSAGE QUEUE (RabbitMQ)                       │   │
-│  │                Events · Tasks · Notifications · Audit                │   │
+│  │                       MESSAGE QUEUE (RabbitMQ)                      │   │
+│  │                Events · Tasks · Notifications · Audit               │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
-│                                 │                                          │
-│    ┌────────────────────────────┼────────────────────────────┐            │
-│    ▼                            ▼                            ▼            │
-│  ┌──────────────┐   ┌────────────────────┐   ┌───────────────────┐       │
-│  │ Notification │   │   Worker Service   │   │   Report Service  │       │
-│  │   Service    │   │                    │   │                   │       │
-│  │              │   │ • Background Jobs  │   │ • PDF Generation  │       │
-│  │ • ntfy       │   │ • Data Sync        │   │ • Excel Export    │       │
-│  │ • WebSocket  │   │ • Cleanup Tasks    │   │ • Analytics       │       │
-│  │ • Email      │   │ • Reminders        │   │ • Dashboards      │       │
-│  └──────────────┘   └────────────────────┘   └───────────────────┘       │
+│                                     │                                      │
+│            ┌────────────────────────┼────────────────────────┐             │
+│            ▼                        ▼                        ▼             │
+│  ┌───────────────────┐   ┌─────────────────────┐   ┌───────────────────┐   │
+│  │ Notification      │   │   Worker Service    │   │   Report Service  │   │
+│  │   Service         │   │                     │   │                   │   │
+│  │                   │   │ • Background Jobs   │   │ • PDF Generation  │   │
+│  │ • ntfy            │   │ • Data Sync         │   │ • Excel Export    │   │
+│  │ • WebSocket       │   │ • Cleanup Tasks     │   │ • Analytics       │   │
+│  │ • Email           │   │ • Reminders         │   │ • Dashboards      │   │
+│  └───────────────────┘   └─────────────────────┘   └───────────────────┘   │
 │                                                                            │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                         DATA LAYER                                   │   │
-│  │                                                                       │   │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌────────────┐  │   │
-│  │  │ PostgreSQL  │  │    Redis    │  │ Elasticsearch│  │   MinIO    │  │   │
-│  │  │             │  │             │  │             │  │            │  │   │
-│  │  │ • Primary   │  │ • Cache     │  │ • Search    │  │ • Files    │  │   │
-│  │  │   Database  │  │ • Sessions  │  │ • Indexing  │  │ • Documents│  │   │
-│  │  │ • JSONB     │  │ • Pub/Sub   │  │ • Logs      │  │ • Images   │  │   │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘  │   │
-│  │                                                                       │   │
-│  │  ┌─────────────────────────────────────────────────────────────────┐ │   │
-│  │  │                    Orthanc PACS Server                           │ │   │
-│  │  │              DICOM Storage · WADO-RS · Query/Retrieve            │ │   │
-│  │  └─────────────────────────────────────────────────────────────────┘ │   │
+│  │                         DATA LAYER                                  │   │
+│  │                                                                     │   │
+│  │ ┌─────────────┐  ┌─────────────┐  ┌───────────────┐  ┌────────────┐ │   │
+│  │ │ PostgreSQL  │  │    Redis    │  │ Elasticsearch │  │   MinIO    │ │   │
+│  │ │             │  │             │  │               │  │            │ │   │
+│  │ │ • Primary   │  │ • Cache     │  │ • Search      │  │ • Files    │ │   │
+│  │ │   Database  │  │ • Sessions  │  │ • Indexing    │  │ • Documents│ │   │
+│  │ │ • JSONB     │  │ • Pub/Sub   │  │ • Logs        │  │ • Images   │ │   │
+│  │ └─────────────┘  └─────────────┘  └───────────────┘  └────────────┘ │   │
+│  │                                                                     │   │
+│  │ ┌─────────────────────────────────────────────────────────────────┐ │   │
+│  │ │                    Orthanc PACS Server                          │ │   │
+│  │ │              DICOM Storage · WADO-RS · Query/Retrieve           │ │   │
+│  │ └─────────────────────────────────────────────────────────────────┘ │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
+│                                                                            │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -79,33 +79,33 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                     NestJS Service Structure                     │
+│                     NestJS Service Structure                    │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
+│                                                                 │
 │   ┌──────────────────────────────────────────────────────────┐  │
-│   │                    Controller Layer                       │  │
+│   │                    Controller Layer                      │  │
 │   │   • REST Endpoints       • Request Validation            │  │
 │   │   • Response Formatting  • Error Handling                │  │
 │   └────────────────────────────┬─────────────────────────────┘  │
-│                                │                                 │
+│                                │                                │
 │   ┌────────────────────────────▼─────────────────────────────┐  │
-│   │                    Service Layer                          │  │
+│   │                    Service Layer                         │  │
 │   │   • Business Logic       • Transaction Management        │  │
 │   │   • Validation Rules     • Event Emission                │  │
 │   └────────────────────────────┬─────────────────────────────┘  │
-│                                │                                 │
+│                                │                                │
 │   ┌────────────────────────────▼─────────────────────────────┐  │
-│   │                   Repository Layer                        │  │
+│   │                   Repository Layer                       │  │
 │   │   • Data Access          • Query Building                │  │
 │   │   • Entity Mapping       • Caching Strategy              │  │
 │   └────────────────────────────┬─────────────────────────────┘  │
-│                                │                                 │
+│                                │                                │
 │   ┌────────────────────────────▼─────────────────────────────┐  │
-│   │                    Entity Layer                           │  │
+│   │                    Entity Layer                          │  │
 │   │   • TypeORM Entities     • FHIR Resource Mapping         │  │
 │   │   • Validation Rules     • Relationships                 │  │
 │   └──────────────────────────────────────────────────────────┘  │
-│                                                                  │
+│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -338,12 +338,12 @@ CREATE SCHEMA config;     -- System configuration
            │                               │
            │                               │
            ▼                               │
-┌─────────────────────┐                   │
-│    appointments     │                   │
-├─────────────────────┤                   │
-│ id                  │                   │
-│ patient_id          │◄──────────────────┤
-│ practitioner_id     │◄──────────────────┘
+┌─────────────────────┐                    │
+│    appointments     │                    │
+├─────────────────────┤                    │
+│ id                  │                    │
+│ patient_id          │◄───────────────────┤
+│ practitioner_id     │◄───────────────────┘
 │ location_id         │◄──────┘
 │ start_time          │
 │ end_time            │
@@ -392,37 +392,37 @@ CREATE SCHEMA config;     -- System configuration
           │         ┌─────────────────────┤
           │         │                     │
           ▼         ▼                     │
-┌─────────────────────────┐              │
-│  medication_requests    │              │
-├─────────────────────────┤              │
-│ id                      │              │
-│ patient_id              │◄─────────────┤
-│ encounter_id            │              │
-│ medication_id           │◄───┐         │
-│ status                  │    │         │
-│ intent                  │    │         │
-│ dosage_instruction      │    │         │
-│ quantity                │    │         │
-│ authored_on             │    │         │
-│ requester_id            │    │         │
-└─────────────────────────┘    │         │
-                               │         │
-                    ┌──────────┘         │
-                    │                    │
-                    ▼                    │
-          ┌─────────────────────┐        │
-          │    medications      │        │
-          ├─────────────────────┤        │
-          │ id                  │        │
-          │ code                │        │
-          │ name_ar             │        │
-          │ name_fr             │        │
-          │ form                │        │
-          │ strength            │        │
-          │ manufacturer        │        │
-          └─────────────────────┘        │
-                                         │
-          ┌──────────────────────────────┘
+┌─────────────────────────┐               │
+│  medication_requests    │               │
+├─────────────────────────┤               │
+│ id                      │               │
+│ patient_id              │◄──────────────┤
+│ encounter_id            │               │
+│ medication_id           │◄───┐          │
+│ status                  │    │          │
+│ intent                  │    │          │
+│ dosage_instruction      │    │          │
+│ quantity                │    │          │
+│ authored_on             │    │          │
+│ requester_id            │    │          │
+└─────────────────────────┘    │          │
+                               │          │
+                    ┌──────────┘          │
+                    │                     │
+                    ▼                     │
+          ┌─────────────────────┐         │
+          │    medications      │         │
+          ├─────────────────────┤         │
+          │ id                  │         │
+          │ code                │         │
+          │ name_ar             │         │
+          │ name_fr             │         │
+          │ form                │         │
+          │ strength            │         │
+          │ manufacturer        │         │
+          └─────────────────────┘         │
+                                          │
+          ┌───────────────────────────────┘
           │
           ▼
 ┌─────────────────────────┐
@@ -462,8 +462,8 @@ CREATE SCHEMA config;     -- System configuration
                    │                      │
                    │                      ▼ INVALID ───▶ 400 Bad Request
                    │                      │
-                   ▼ VALID               │
-          ┌─────────────────┐    ◄───────┘
+                   ▼ VALID                │
+          ┌─────────────────┐    ◄────────┘
           │ Patient Service │
           │  (Business)     │
           └────────┬────────┘
@@ -496,27 +496,27 @@ CREATE SCHEMA config;     -- System configuration
 │ Cache Update    │    │   RabbitMQ      │
 │ (Redis)         │    │ patient.created │
 └─────────────────┘    └────────┬────────┘
-                               │
-                               ▼
-                      ┌─────────────────┐
-                      │ Elasticsearch   │
-                      │ Index Update    │
-                      └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │ Elasticsearch   │
+                       │ Index Update    │
+                       └─────────────────┘
 ```
 
 ### 4.2 مسار حجز موعد
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                      Appointment Booking Flow                     │
+│                      Appointment Booking Flow                    │
 ├──────────────────────────────────────────────────────────────────┤
-│                                                                   │
+│                                                                  │
 │  1. Check Availability                                           │
-│     ┌─────────┐                      ┌─────────────────┐         │
-│     │ Client  │ ── GET /slots ────▶  │ Schedule Service │         │
-│     └─────────┘                      └────────┬────────┘         │
-│                                              │                   │
-│                      ┌───────────────────────┘                   │
+│     ┌─────────┐                      ┌──────────────────┐        │
+│     │ Client  │ ── GET /slots ────▶  │ Schedule Service │        │
+│     └─────────┘                      └────────┬─────────┘        │
+│                                               │                  │
+│                      ┌────────────────────────┘                  │
 │                      ▼                                           │
 │            ┌─────────────────┐                                   │
 │            │ Query Available │                                   │
@@ -528,46 +528,46 @@ CREATE SCHEMA config;     -- System configuration
 │            │ Return Slots    │                                   │
 │            │ with Status     │                                   │
 │            └─────────────────┘                                   │
-│                                                                   │
+│                                                                  │
 │  2. Book Appointment                                             │
 │     ┌─────────┐                      ┌─────────────────┐         │
 │     │ Client  │ ── POST /appt ────▶  │ Appointment Svc │         │
 │     └─────────┘                      └────────┬────────┘         │
-│                                              │                   │
-│            ┌─────────────────────────────────┘                   │
+│                                               │                  │
+│            ┌──────────────────────────────────┘                  │
 │            ▼                                                     │
-│   ┌─────────────────┐                                           │
-│   │ Transaction     │                                           │
-│   │ ┌─────────────┐ │    ┌─────────────┐                       │
-│   │ │ Lock Slot   │─┼───▶│ Redis Lock  │                       │
-│   │ └─────────────┘ │    └─────────────┘                       │
-│   │ ┌─────────────┐ │                                           │
-│   │ │ Validate    │ │                                           │
-│   │ │ Patient     │ │                                           │
-│   │ └─────────────┘ │                                           │
-│   │ ┌─────────────┐ │    ┌─────────────┐                       │
-│   │ │ Create Appt │─┼───▶│ PostgreSQL  │                       │
-│   │ └─────────────┘ │    └─────────────┘                       │
-│   │ ┌─────────────┐ │    ┌─────────────┐                       │
-│   │ │ Update Slot │─┼───▶│ Mark Booked │                       │
-│   │ └─────────────┘ │    └─────────────┘                       │
-│   └─────────────────┘                                           │
+│   ┌─────────────────┐                                            │
+│   │ Transaction     │                                            │
+│   │ ┌─────────────┐ │    ┌─────────────┐                         │
+│   │ │ Lock Slot   │─┼───▶│ Redis Lock  │                         │
+│   │ └─────────────┘ │    └─────────────┘                         │
+│   │ ┌─────────────┐ │                                            │
+│   │ │ Validate    │ │                                            │
+│   │ │ Patient     │ │                                            │
+│   │ └─────────────┘ │                                            │
+│   │ ┌─────────────┐ │    ┌─────────────┐                         │
+│   │ │ Create Appt │─┼───▶│ PostgreSQL  │                         │
+│   │ └─────────────┘ │    └─────────────┘                         │
+│   │ ┌─────────────┐ │    ┌─────────────┐                         │
+│   │ │ Update Slot │─┼───▶│ Mark Booked │                         │
+│   │ └─────────────┘ │    └─────────────┘                         │
+│   └─────────────────┘                                            │
 │            │                                                     │
 │            ▼                                                     │
-│   ┌─────────────────┐    ┌─────────────────┐                   │
-│   │ Emit Event      │───▶│ RabbitMQ        │                   │
-│   │ appointment     │    │ appointment     │                   │
-│   │ .booked         │    │ .booked         │                   │
-│   └─────────────────┘    └────────┬────────┘                   │
-│                                   │                             │
-│            ┌──────────────────────┼──────────────────────┐      │
-│            ▼                      ▼                      ▼      │
-│   ┌─────────────────┐    ┌─────────────────┐    ┌────────────┐ │
-│   │ Send            │    │ Schedule        │    │ Audit      │ │
-│   │ Confirmation    │    │ Reminder Job    │    │ Log        │ │
-│   │ (ntfy/SMS)      │    │ (24h before)    │    │            │ │
-│   └─────────────────┘    └─────────────────┘    └────────────┘ │
-│                                                                   │
+│   ┌─────────────────┐    ┌─────────────────┐                     │
+│   │ Emit Event      │───▶│ RabbitMQ        │                     │
+│   │ appointment     │    │ appointment     │                     │
+│   │ .booked         │    │ .booked         │                     │
+│   └─────────────────┘    └────────┬────────┘                     │
+│                                   │                              │
+│            ┌──────────────────────┼──────────────────────┐       │
+│            ▼                      ▼                      ▼       │
+│   ┌─────────────────┐    ┌─────────────────┐    ┌────────────┐   │
+│   │ Send            │    │ Schedule        │    │ Audit      │   │
+│   │ Confirmation    │    │ Reminder Job    │    │ Log        │   │
+│   │ (ntfy/SMS)      │    │ (24h before)    │    │            │   │
+│   └─────────────────┘    └─────────────────┘    └────────────┘   │
+│                                                                  │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -579,62 +579,62 @@ CREATE SCHEMA config;     -- System configuration
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      Security Layers                             │
+│                      Security Layers                            │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
+│                                                                 │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │ Layer 1: Network Security                                  │  │
+│  │ Layer 1: Network Security                                 │  │
 │  │ • Firewall Rules                                          │  │
 │  │ • VPN for admin access                                    │  │
 │  │ • DDoS Protection                                         │  │
 │  │ • IP Whitelisting (for external APIs)                     │  │
 │  └───────────────────────────────────────────────────────────┘  │
-│                              │                                   │
-│                              ▼                                   │
+│                              │                                  │
+│                              ▼                                  │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │ Layer 2: Transport Security                                │  │
+│  │ Layer 2: Transport Security                               │  │
 │  │ • TLS 1.3 (all communications)                            │  │
 │  │ • Certificate pinning (mobile apps)                       │  │
 │  │ • HSTS headers                                            │  │
 │  └───────────────────────────────────────────────────────────┘  │
-│                              │                                   │
-│                              ▼                                   │
+│                              │                                  │
+│                              ▼                                  │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │ Layer 3: Authentication                                    │  │
+│  │ Layer 3: Authentication                                   │  │
 │  │ • JWT with RS256 signing                                  │  │
 │  │ • Refresh token rotation                                  │  │
 │  │ • MFA (TOTP) for sensitive roles                          │  │
 │  │ • Session management (Redis)                              │  │
 │  │ • Brute-force protection                                  │  │
 │  └───────────────────────────────────────────────────────────┘  │
-│                              │                                   │
-│                              ▼                                   │
+│                              │                                  │
+│                              ▼                                  │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │ Layer 4: Authorization (RBAC)                              │  │
+│  │ Layer 4: Authorization (RBAC)                             │  │
 │  │ • Role-based access control                               │  │
 │  │ • Resource-level permissions                              │  │
 │  │ • Organization-scoped access                              │  │
 │  │ • Patient consent management                              │  │
 │  └───────────────────────────────────────────────────────────┘  │
-│                              │                                   │
-│                              ▼                                   │
+│                              │                                  │
+│                              ▼                                  │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │ Layer 5: Data Security                                     │  │
+│  │ Layer 5: Data Security                                    │  │
 │  │ • Encryption at rest (AES-256)                            │  │
 │  │ • Field-level encryption (sensitive data)                 │  │
 │  │ • Data masking (logs, exports)                            │  │
 │  │ • Secure deletion                                         │  │
 │  └───────────────────────────────────────────────────────────┘  │
-│                              │                                   │
-│                              ▼                                   │
+│                              │                                  │
+│                              ▼                                  │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │ Layer 6: Audit & Monitoring                                │  │
+│  │ Layer 6: Audit & Monitoring                               │  │
 │  │ • Complete audit trail                                    │  │
 │  │ • Anomaly detection                                       │  │
 │  │ • Real-time alerts                                        │  │
 │  │ • Immutable logs                                          │  │
 │  └───────────────────────────────────────────────────────────┘  │
-│                                                                  │
+│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
