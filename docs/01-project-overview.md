@@ -63,7 +63,7 @@ Build a comprehensive National Health Information System connecting all Algerian
 > **المصطلحات السريرية المنهجية**
 > - أكثر من 350,000 مفهوم طبي
 > - يدعم الترميز المركب (Post-coordination)
-> - متوفر بالإنجليزية والإسبانية والفرنسية
+> - متوفر بالعربية والإنجليزية والإسبانية والفرنسية
 
 ```
 استخدامات SNOMED CT:
