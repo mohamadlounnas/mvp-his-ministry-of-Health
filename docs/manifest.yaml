@@ -122,9 +122,9 @@ standards_reference:
     description: Medical imaging standard
     mandatory: true
 
-last_updated: 2025-01-20
+last_updated: 2026-01-09
 
 notes:
-  - Documents 01, 02, 03, 05, 08 are created
+  - Documents 01, 02, 03, 05, 08, 10, 11, 12 are created
   - Documents 04, 06, 07, 09 are planned for next iteration
   - All documents follow bilingual format (Arabic + English)
