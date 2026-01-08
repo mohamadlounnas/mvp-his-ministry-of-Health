@@ -1,0 +1,109 @@
+# GHIS - Government Hospital Information System
+# وثائق نظام إدارة المستشفيات الحكومية الجزائرية
+# Documentation Manifest
+
+project:
+  name: GHIS
+  full_name: Government Hospital Information System
+  arabic_name: نظام معلومات المستشفيات الحكومية
+  version: "0.1.0"
+  status: planning
+  organization: وزارة الصحة الجزائرية
+  start_date: 2025
+
+documents:
+  - path: ./01-project-overview.md
+    title: Project Overview
+    title_ar: نظرة عامة على المشروع
+    description: High-level project vision, goals, and scope
+    status: draft
+    priority: critical
+
+  - path: ./02-standards-compliance.md
+    title: Healthcare Standards Compliance
+    title_ar: الامتثال للمعايير الصحية
+    description: WHO, HL7 FHIR, ICD-11, SNOMED CT, DICOM standards implementation
+    status: draft
+    priority: critical
+
+  - path: ./03-system-architecture.md
+    title: System Architecture
+    title_ar: هيكلة النظام
+    description: Technical architecture, modules, integrations
+    status: draft
+    priority: critical
+
+  - path: ./04-database-design.md
+    title: Database Design
+    title_ar: تصميم قاعدة البيانات
+    description: PostgreSQL schema following FHIR resource patterns
+    status: draft
+    priority: critical
+
+  - path: ./05-modules-specification.md
+    title: Modules Specification
+    title_ar: مواصفات الوحدات
+    description: Detailed specification of each HIS module
+    status: draft
+    priority: high
+
+  - path: ./06-api-design.md
+    title: API Design
+    title_ar: تصميم واجهة البرمجة
+    description: FHIR-compliant REST API specifications
+    status: planned
+    priority: high
+
+  - path: ./07-security-framework.md
+    title: Security Framework
+    title_ar: إطار الأمان
+    description: Data protection, access control, audit trails
+    status: planned
+    priority: critical
+
+  - path: ./08-team-structure.md
+    title: Team Structure & Roadmap
+    title_ar: هيكل الفريق وخارطة الطريق
+    description: Team organization and development phases
+    status: draft
+    priority: high
+
+  - path: ./09-glossary.md
+    title: Medical & Technical Glossary
+    title_ar: المصطلحات الطبية والتقنية
+    description: Terminology reference in Arabic, English, French
+    status: planned
+    priority: medium
+
+standards_reference:
+  - name: ICD-11
+    url: https://icd.who.int/
+    description: WHO International Classification of Diseases 11th Revision
+    mandatory: true
+    
+  - name: HL7 FHIR R5
+    url: https://hl7.org/fhir/
+    description: Fast Healthcare Interoperability Resources
+    mandatory: true
+    
+  - name: SNOMED CT
+    url: https://www.snomed.org/
+    description: Clinical terminology standard
+    mandatory: recommended
+    
+  - name: LOINC
+    url: https://loinc.org/
+    description: Laboratory observations coding
+    mandatory: recommended
+    
+  - name: DICOM
+    url: https://www.dicomstandard.org/
+    description: Medical imaging standard
+    mandatory: true
+
+last_updated: 2025-01-20
+
+notes:
+  - Documents 01, 02, 03, 05, 08 are created
+  - Documents 04, 06, 07, 09 are planned for next iteration
+  - All documents follow bilingual format (Arabic + English)
