@@ -75,6 +75,20 @@ documents:
     status: planned
     priority: medium
 
+  - path: ./10-testing-strategy.md
+    title: Testing & QA Strategy
+    title_ar: استراتيجية الاختبار وضمان الجودة
+    description: Testing pyramid, clinical safety tests, and performance benchmarks
+    status: draft
+    priority: critical
+
+  - path: ./11-simplicity-philosophy.md
+    title: Simplicity & Maintainability
+    title_ar: مبادئ البساطة وسهولة الصيانة
+    description: Guiding principles for avoiding over-engineering (Boring Tech, Modular Monolith)
+    status: draft
+    priority: high
+
 standards_reference:
   - name: ICD-11
     url: https://icd.who.int/
