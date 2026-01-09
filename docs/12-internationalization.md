@@ -306,7 +306,32 @@ class PatientFormWidget extends StatelessWidget {
 ```
 
 ---
+### 3.4 Entity-level localization (DB)
 
+To support localized content on entities (e.g., ICD codes, patient display names, medication labels), GHIS uses a *default* column for the primary language (Arabic) and a JSONB `locals` column that contains translations keyed by locale code.
+
+Example (TypeORM):
+
+```typescript
+@Column({ type: 'varchar', length: 200 })
+name: string; // default (Arabic)
+
+@Column({ type: 'jsonb', nullable: true })
+locals?: { [lang: string]: { name?: string; title?: string; description?: string } };
+```
+
+Example (PostgreSQL):
+
+```sql
+name VARCHAR(200) NOT NULL,
+locals JSONB,
+```
+
+Search and indexing notes:
+- Create functional GIN indexes that prefer the default column and fallback to `locals->'ar'->>'name'` for Arabic full-text search.
+- Keep `locals` flexible to store multiple translatable keys per entity.
+
+---
 ## 4. إضافة لغة جديدة (Adding New Language)
 
 ### الخطوات:

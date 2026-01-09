@@ -54,11 +54,10 @@ ICD-11 Structure:
 // مثال على هيكل تخزين ICD-11
 interface ICD11Code {
   code: string;           // e.g., "BA00" (Essential hypertension)
-  title: {
-    ar: string;          // ارتفاع ضغط الدم الأساسي
-    fr: string;          // Hypertension essentielle
-    en: string;          // Essential hypertension
-  };
+  // Default title in the system default language (Arabic)
+  title: string;
+  // Localized titles by language code
+  locals?: { [lang: string]: { title?: string } };
   chapter: string;        // "11" (Circulatory system)
   blockId: string;        // "BA00-BA9Z"
   parent?: string;        // Parent code
@@ -71,9 +70,8 @@ interface ICD11Code {
 CREATE TABLE icd11_codes (
   id SERIAL PRIMARY KEY,
   code VARCHAR(20) UNIQUE NOT NULL,
-  title_ar TEXT NOT NULL,
-  title_fr TEXT NOT NULL,
-  title_en TEXT NOT NULL,
+  title TEXT NOT NULL,
+  locals JSONB,
   chapter VARCHAR(5) NOT NULL,
   block_id VARCHAR(20),
   parent_code VARCHAR(20) REFERENCES icd11_codes(code),
@@ -84,8 +82,9 @@ CREATE TABLE icd11_codes (
 );
 
 CREATE INDEX idx_icd11_code ON icd11_codes(code);
-CREATE INDEX idx_icd11_title_ar ON icd11_codes USING GIN(to_tsvector('arabic', title_ar));
-CREATE INDEX idx_icd11_title_fr ON icd11_codes USING GIN(to_tsvector('french', title_fr));
+-- Arabic full-text index: prefer `title`, fallback to locals->'ar'->>'title'
+CREATE INDEX idx_icd11_title_ar ON icd11_codes USING GIN(to_tsvector('arabic', coalesce(title, (locals->'ar'->>'title'))));
+CREATE INDEX idx_icd11_title_fr ON icd11_codes USING GIN(to_tsvector('french', (locals->'fr'->>'title')));
 ```
 
 ### 1.1.4 API لجلب ICD-11
@@ -488,9 +487,9 @@ CREATE TABLE loinc_codes (
   class VARCHAR(50),
   status VARCHAR(20),
   version VARCHAR(10),
-  -- Translations
-  name_ar TEXT,
-  name_fr TEXT
+  -- Default name and localized names
+  name TEXT,
+  locals JSONB
 );
 
 -- Lab results reference LOINC

@@ -135,11 +135,14 @@ export class Patient {
   @Column({ nullable: true, unique: true })
   nationalId: string;
 
-  @Column({ type: 'jsonb' })
-  name: {
-    ar: { family: string; given: string[] };
-    fr: { family: string; given: string[] };
-  };
+  // Display name in the default language (Arabic)
+  @Column({ type: 'varchar', length: 300 })
+  name: string;
+
+  // Localized values for translatable keys (optional). Example:
+  // locals = { "fr": { "name": "Nom en français", "family": "...", "given": ["..."] } }
+  @Column({ type: 'jsonb', nullable: true })
+  locals?: { [lang: string]: { name?: string; family?: string; given?: string[] } };
 
   @Column({ type: 'date' })
   birthDate: Date;

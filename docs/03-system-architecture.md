@@ -328,8 +328,8 @@ CREATE SCHEMA config;     -- System configuration
 ├─────────────────────┤         ├─────────────────────┤
 │ id                  │         │ id                  │
 │ name                │         │ identifier          │
-│ type                │         │ name_ar             │
-│ organization_id     │◄────────│ name_fr             │
+│ type                │         │ name                │
+│ organization_id     │◄────────│ locals              │
 │ parent_id           │         │ gender              │
 │ status              │         │ specialty           │
 │ physical_type       │         │ organization_id     │
@@ -359,8 +359,8 @@ CREATE SCHEMA config;     -- System configuration
 │ id                  │◄────────│ patient_id          │
 │ mrn                 │         │ id                  │
 │ national_id         │         │ class               │
-│ name_ar             │         │ type                │
-│ name_fr             │         │ status              │
+│ name                │         │ type                │
+│ locals              │         │ status              │
 │ birth_date          │         │ priority            │
 │ gender              │         │ period_start        │
 │ phone               │         │ period_end          │
@@ -415,8 +415,8 @@ CREATE SCHEMA config;     -- System configuration
           ├─────────────────────┤         │
           │ id                  │         │
           │ code                │         │
-          │ name_ar             │         │
-          │ name_fr             │         │
+          │ name                │         │
+          │ locals              │         │
           │ form                │         │
           │ strength            │         │
           │ manufacturer        │         │

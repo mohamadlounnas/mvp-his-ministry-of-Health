@@ -7,6 +7,16 @@ GHIS uses **PostgreSQL 16+** as its primary database, organized into 8 specializ
 
 يستخدم GHIS **PostgreSQL 16+** كقاعدة بيانات أساسية، منظمة في 8 schemas متخصصة تحتوي على ~35 جدول. التصميم يتبع أنماط موارد FHIR R5 مع الحفاظ على الامتثال لـ ACID وسلامة العلاقات.
 
+**Localization strategy (Entity-level):**
+- Each entity stores a default-language field (Arabic) for display strings (e.g., `name`, `title`, `display_text`).
+- Translations are stored in a flexible JSONB column `locals`, keyed by language code: `locals -> { "fr": { "name": "..." }, "en": { "name": "..." } }`.
+- Full-text indexes should prefer the default field and fallback to `locals->'ar'->>'name'` for Arabic searches.
+
+**استراتيجية الترجمة (على مستوى الكيان):**
+- كل كيان يحتفظ بحقل العرض بلغة النظام الافتراضية (العربية) مثل `name`، `title`.
+- الترجمات مخزنة في عمود JSONB `locals`، مفهرس حسب رمز اللغة.
+- فهارس البحث النصي تفضل الحقل الافتراضي وتستخدم `locals` كبديل.
+
 ---
 
 ## Schema Organization | تنظيم الـ Schemas
@@ -38,10 +48,10 @@ CREATE TABLE core.patients (
     -- Demographics
     family_name VARCHAR(100) NOT NULL,
     given_names VARCHAR(100) NOT NULL,
-    family_name_ar VARCHAR(100),
-    given_names_ar VARCHAR(100),
+    -- Localized names (optional)
+    locals JSONB,
     
-    gender VARCHAR(10) CHECK (gender IN ('male', 'female', 'other', 'unknown')),
+    gender VARCHAR(10) CHECK (gender IN ('male', 'female')),
     birth_date DATE NOT NULL,
     deceased_date DATE,
     
@@ -73,6 +83,8 @@ CREATE INDEX idx_patients_national_id ON core.patients(national_id);
 CREATE INDEX idx_patients_family_name ON core.patients(family_name);
 CREATE INDEX idx_patients_birth_date ON core.patients(birth_date);
 CREATE INDEX idx_patients_fhir ON core.patients USING GIN(fhir_resource);
+-- Arabic full-text index (family/given or fallback to locals->'ar'->>'name')
+CREATE INDEX idx_patients_name_ar ON core.patients USING GIN(to_tsvector('arabic', coalesce(family_name || ' ' || given_names, (locals->'ar'->>'name'))));
 ```
 
 ### 1.2 Patient Contacts
@@ -131,8 +143,7 @@ CREATE TABLE core.practitioners (
     
     family_name VARCHAR(100) NOT NULL,
     given_names VARCHAR(100) NOT NULL,
-    family_name_ar VARCHAR(100),
-    given_names_ar VARCHAR(100),
+    locals JSONB,
     
     gender VARCHAR(10),
     birth_date DATE,
@@ -165,7 +176,7 @@ CREATE TABLE core.organizations (
     
     code VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR(200) NOT NULL,
-    name_ar VARCHAR(200),
+    locals JSONB,
     
     type VARCHAR(50) NOT NULL,  -- hospital, clinic, laboratory, pharmacy
     
@@ -195,7 +206,7 @@ CREATE TABLE core.locations (
     
     code VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR(200) NOT NULL,
-    name_ar VARCHAR(200),
+    locals JSONB,
     
     type VARCHAR(50) NOT NULL,  -- ward, room, bed, operating_room, emergency
     
@@ -350,7 +361,7 @@ CREATE TABLE clinical.conditions (
     code_system VARCHAR(50),  -- ICD-11, SNOMED-CT
     code VARCHAR(20) NOT NULL,
     display_text VARCHAR(500),
-    display_text_ar VARCHAR(500),
+    locals JSONB,
     
     onset_date DATE,
     abatement_date DATE,
@@ -387,7 +398,7 @@ CREATE TABLE clinical.observations (
     code_system VARCHAR(50),  -- LOINC, SNOMED-CT
     code VARCHAR(20) NOT NULL,
     display_text VARCHAR(500),
-    display_text_ar VARCHAR(500),
+    locals JSONB,
     
     value_quantity DECIMAL(10,2),
     value_unit VARCHAR(20),
@@ -431,7 +442,7 @@ CREATE TABLE clinical.procedures (
     code_system VARCHAR(50),
     code VARCHAR(20) NOT NULL,
     display_text VARCHAR(500),
-    display_text_ar VARCHAR(500),
+    locals JSONB,
     
     performed_start TIMESTAMPTZ NOT NULL,
     performed_end TIMESTAMPTZ,
@@ -470,7 +481,7 @@ CREATE TABLE clinical.allergies (
     code_system VARCHAR(50),
     code VARCHAR(20),
     display_text VARCHAR(500) NOT NULL,
-    display_text_ar VARCHAR(500),
+    locals JSONB,
     
     reaction_manifestation TEXT,
     reaction_severity VARCHAR(20),  -- mild, moderate, severe
@@ -544,7 +555,7 @@ CREATE TABLE medication.medications (
     code VARCHAR(50) UNIQUE NOT NULL,
     
     name VARCHAR(200) NOT NULL,
-    name_ar VARCHAR(200),
+    locals JSONB,
     
     form VARCHAR(50),  -- tablet, capsule, injection, syrup
     strength VARCHAR(50),
@@ -681,7 +692,7 @@ CREATE TABLE lab.lab_results (
     
     test_code VARCHAR(20) NOT NULL,  -- LOINC code
     test_name VARCHAR(200),
-    test_name_ar VARCHAR(200),
+    locals JSONB,
     
     result_value VARCHAR(500),
     result_unit VARCHAR(20),
@@ -846,8 +857,7 @@ CREATE TABLE coding.icd11_codes (
     code VARCHAR(20) UNIQUE NOT NULL,
     
     title VARCHAR(500) NOT NULL,
-    title_ar VARCHAR(500),
-    title_fr VARCHAR(500),
+    locals JSONB,
     
     chapter VARCHAR(100),
     parent_code VARCHAR(20),
@@ -880,7 +890,7 @@ CREATE TABLE coding.loinc_codes (
     method_type VARCHAR(100),
     
     long_common_name VARCHAR(500),
-    long_common_name_ar VARCHAR(500),
+    locals JSONB,
     
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -962,10 +972,10 @@ CREATE TRIGGER update_patients_updated_at
 
 ```sql
 CREATE INDEX idx_patients_fulltext ON core.patients 
-    USING GIN(to_tsvector('arabic', family_name_ar || ' ' || given_names_ar));
+    USING GIN(to_tsvector('arabic', coalesce(family_name || ' ' || given_names, (locals->'ar'->>'name'))));
 
 CREATE INDEX idx_conditions_fulltext ON clinical.conditions 
-    USING GIN(to_tsvector('arabic', display_text_ar));
+    USING GIN(to_tsvector('arabic', coalesce(display_text, (locals->'ar'->>'display_text'))));
 ```
 
 ---
