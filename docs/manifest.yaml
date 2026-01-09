@@ -96,6 +96,13 @@ documents:
     status: draft
     priority: high
 
+  - path: ./13-dart-style.md
+    title: Effective Dart Style
+    title_ar: دليل أسلوب Dart
+    description: Summary of https://dart.dev/effective-dart/style — naming, formatting, null-safety, lints
+    status: draft
+    priority: medium
+
 standards_reference:
   - name: ICD-11
     url: https://icd.who.int/
